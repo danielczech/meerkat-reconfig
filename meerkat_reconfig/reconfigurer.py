@@ -65,6 +65,15 @@ class Reconfigurer(object):
         for msg in msg_list:
             self.redis_server.publish(host_channel, msg)
 
+    def gen_host_names(self, firsthost, lasthost, prefix, inst_num):
+        """Generate a list of host names according to a range of
+        host numbers and the host naming convention. 
+        """
+        host_names = []
+        for i in range(firsthost, lasthost + 1):
+            host_names = host_names + ['{}{}/{}'.format(prefix, i, inst_num)]
+        return host_names 
+
     def reconfigure(self, hosts):
         """Republish the relevant messages to the 
         specified hosts. 
