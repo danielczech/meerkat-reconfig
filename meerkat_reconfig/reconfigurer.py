@@ -6,7 +6,7 @@ import sys
 
 class Reconfigurer(object):
     """Reads the most recent observation config information 
-    from Redis and publish the information to the 
+    from Redis and publishes the information to the 
     corresponding processing nodes.
     """
 
@@ -87,21 +87,17 @@ class Reconfigurer(object):
         """
         # Global host redis channels
         global_channel = '{}:///set'.format(self.hpgdomain)
-        try:
-            global_msgs = self.read_obs_info('')
-        except:
-            print('Could not find messages for channel {}.'.format(global_channel))
-            sys.exit(0)
+        global_msgs = self.read_obs_info('')
+        if(len(global_msgs) == 0):
+            print('Could not find messages for global channel: {}.'.format(global_channel))
         self.republish(global_channel, global_msgs)
         # Host-specific redis channels
         # Sequentially publish each message to each host channel
-        if(len(hosts) > 0):
-            for host in hosts:
-                host_channel = '{}://{}/set'.format(self.hpgdomain, host)
-                try:
-                    msg_list = self.read_obs_info(host)
-                except:
-                    print('Could not find messages for channel {}.'.format(host_channel))
-                    continue       
-                self.republish(host_channel, msg_list)            
+        for host in hosts:
+            host_channel = '{}://{}/set'.format(self.hpgdomain, host)
+            msg_list = self.read_obs_info(host)
+            if(len(msg_list) == 0):
+                print('Could not find messages for channel: {}.'.format(host_channel))
+                continue       
+            self.republish(host_channel, msg_list)            
         
