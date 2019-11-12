@@ -12,11 +12,15 @@ by the `coordinator` process.
 ### Usage:
 
 Resend configuration messages for processing node 48, instance 0:  
-`meerkat-reconfig blpn48/0`
+```
+meerkat-reconfig blpn48/0
+```
 
 Resend configuration messages for instance 0 of processing nodes
 in the range 48-63:  
-`meerkat-reconfig blpn{48..63}/0`
+```
+meerkat-reconfig blpn{48..63}/0
+```
 
 <pre>
 positional arguments:
