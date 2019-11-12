@@ -1,14 +1,26 @@
+# Reconfigurer class for accessing and republishing messages to 
+# processing nodes. 
+
 import redis
 import sys
 
 class Reconfigurer(object):
-    """Read most recent observation config information 
+    """Reads the most recent observation config information 
     from Redis and publish the information to the 
     corresponding processing nodes.
     """
 
-    def __init__(self, redis_host = '127.0.0.1', redis_port = '6379', hpgdomain = 'bluse'):
-        """Connect to Redis server.
+    def __init__(self, redis_host = '127.0.0.1', redis_port = '6379', 
+        hpgdomain = 'bluse'):
+        """Initialise and connect to Redis server.
+
+        Args:
+            redis_host (str): IP address of Redis host. 
+            redis_port (str): IP address of Redis port.
+            hpgdomain (str): Hashpipe-Redis Gateway domain name.   
+
+        Returns:
+            None
         """
         self.redis_host = redis_host
         self.port = redis_port
@@ -16,8 +28,19 @@ class Reconfigurer(object):
         self.redis_server = redis.StrictRedis(redis_host, redis_port)
 
     def read_obs_info(self, host):
-        """Read in the most recent stored configuration 
-        information for an observation.
+        """Read in the most recent stored observation configuration 
+        information for one host.
+
+        Args:
+            host (str): Name of specified host (including instance
+            number) of the form [host_name]/[instanc_number].
+            eg: blpn48/0
+
+        Returns:
+            msg_list (list): A list (of strings), of which each item 
+            is a Hashpipe-Redis gateway message. These messages
+            were published to this particular host at the most
+            recent time a subarray was configured.   
         """
         host_channel = '{}://{}/set'.format(self.hpgdomain, host)
         host_msgs = self.redis_server.hgetall(host_channel)
@@ -28,7 +51,16 @@ class Reconfigurer(object):
         return msg_list
 
     def republish(self, host_channel, msg_list):
-        """Sequentially republish messages for a host.
+        """Sequentially republish messages for a particular host.
+           
+        Args:
+            host_channel (str): Full name of the Redis channel for 
+            a particular host (eg bluse://blpn48/0/set).
+            msg_list (list): List of messages (str) to be published
+            to the host Redis channel.
+
+        Returns:
+            None
         """
         for msg in msg_list:
             self.redis_server.publish(host_channel, msg)
@@ -36,6 +68,13 @@ class Reconfigurer(object):
     def reconfigure(self, hosts):
         """Republish the relevant messages to the 
         specified hosts. 
+
+        Args:
+            hosts (str): String containing all user-entered
+            hosts to publish to. Hosts are separated by spaces. 
+   
+        Returns:
+            None
         """
         # Global host redis channels
         global_channel = '{}:///set'.format(self.hpgdomain)
