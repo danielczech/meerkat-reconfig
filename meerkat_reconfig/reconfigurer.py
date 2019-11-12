@@ -79,8 +79,8 @@ class Reconfigurer(object):
         specified hosts. 
 
         Args:
-            hosts (str): String containing all user-entered
-            hosts to publish to. Hosts are separated by spaces. 
+            hosts (list): List containing all user-entered hosts (str)
+            to publish to.
    
         Returns:
             None
@@ -95,8 +95,8 @@ class Reconfigurer(object):
         self.republish(global_channel, global_msgs)
         # Host-specific redis channels
         # Sequentially publish each message to each host channel
-        if(hosts != 'global'):
-            for host in hosts.split():
+        if(len(hosts) > 0):
+            for host in hosts:
                 host_channel = '{}://{}/set'.format(self.hpgdomain, host)
                 try:
                     msg_list = self.read_obs_info(host)

@@ -12,9 +12,8 @@ def cli(args = sys.argv[0]):
         usage = usage, description = description) 
     help_info = """List of hosts to resend to. Global messages are 
                always published. Host names should be of the form 
-               \"[hostname]/[instance_number]\" and separated by 
-               spaces. For example, \"blpn48/0 blpn49/0\"."""
-    parser.add_argument('hosts', type = str, help = help_info)
+               \"[hostname]/[instance_number]\"."""
+    parser.add_argument('hosts', nargs = '+', type = str, help = help_info)
     if(len(sys.argv[1:])==0):
         parser.print_help()
         parser.exit()
