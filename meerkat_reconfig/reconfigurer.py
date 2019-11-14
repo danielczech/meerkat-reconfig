@@ -76,7 +76,8 @@ class Reconfigurer(object):
 
     def reconfigure(self, hosts):
         """Republish the relevant messages to the 
-        specified hosts. 
+        specified hosts. Also publishes global messages, but only to 
+        the hosts listed.
 
         Args:
             hosts (list): List containing all user-entered hosts (str)
@@ -87,10 +88,9 @@ class Reconfigurer(object):
         """
         # Global host redis channels
         global_channel = '{}:///set'.format(self.hpgdomain)
-        global_msgs = self.read_obs_info('')
+        global_msg_list = self.read_obs_info('')
         if(len(global_msgs) == 0):
             print('Could not find messages for global channel: {}.'.format(global_channel))
-        self.republish(global_channel, global_msgs)
         # Host-specific redis channels
         # Sequentially publish each message to each host channel
         for host in hosts:
@@ -99,5 +99,6 @@ class Reconfigurer(object):
             if(len(msg_list) == 0):
                 print('Could not find messages for channel: {}.'.format(host_channel))
                 continue       
+            self.republish(host_channel, global_msg_list)
             self.republish(host_channel, msg_list)            
         

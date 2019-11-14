@@ -24,8 +24,9 @@ meerkat-reconfig blpn{48..63}/0
 
 <pre>
 positional arguments:
-  hosts       List of hosts to resend to. Global messages are always
-              published. Host names should be of the form
+  hosts       List of hosts to resend to. Global messages are 
+              also published, but only to the listed hosts.  
+              Host names should be of the form
               "[hostname]/[instance_number]". For example, "blpn48/0".
 
 optional arguments:
