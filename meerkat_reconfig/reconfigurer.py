@@ -89,7 +89,7 @@ class Reconfigurer(object):
         # Global host redis channels
         global_channel = '{}:///set'.format(self.hpgdomain)
         global_msg_list = self.read_obs_info('')
-        if(len(global_msgs) == 0):
+        if(len(global_msg_list) == 0):
             print('Could not find messages for global channel: {}.'.format(global_channel))
         # Host-specific redis channels
         # Sequentially publish each message to each host channel
